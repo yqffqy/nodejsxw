@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<title>轮播图修改</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style> 
+    .insert{
+      width: 90%;
+      margin: 50px auto;
+      border: 1px solid red;
+    } 
+     table{  
+         width:90%;
+         margin: auto;  
+         text-align:center;  
+         }  
+     table tr th,td{  
+         height:50px;  
+         line-height:50px;  
+         border:1px solid #ccc;  
+         }
+         .img{
+          width: 10%;
+         }
+         .page{
+          width: 90%;
+          margin: auto;
+
+         }  
+      #pageStyle{  
+         display:inline-block;  
+         width:32px;  
+         height:32px;  
+         border:1px solid #CCC;  
+         line-height:32px;  
+         text-align:center;  
+         color:#999;  
+         margin:20px auto;  
+         text-decoration:none;
+      
+         }  
+      #pageStyle:hover{  
+          background-color:#CCC;  
+          }  
+      #pageStyle .active{  
+          background-color:#0CF;  
+          color:#ffffff;  
+          }
+          #change_demo{
+        width: 40%;
+        height: 500px;
+        background: #ccc;
+        position: fixed;
+        left: 29%;
+        top:10%;
+        display: none;
+      }
+      .close{
+        float: right;
+      }
+      .change_id{
+            background: green;
+            border:none;
+          }
+          .del_id{
+            background: red;
+            border:none;
+          }   
+    </style>
+
+</head>
+
+<body ng-app="app" ng-controller="ctrl">
+<div class="insert">
+  <p>轮播图插入新图片</p>
+  <form method="post" action="/swiper_upload" enctype="multipart/form-data">
+    <input name="inputFile" type="file" multiple="mutiple" id="upload" />
+    <input type="button" name="input" value="插入" id="upbtn">
+    <input id="btnUp" type="submit" style="display:none"  />
+    <span style="margin-left: 50px"><a href="/forms">返回首页</a></span>
+  </form>
+</div>
+  <table cellspacing="0">  
+      <thead>  
+        <tr>
+        <td>次序</td>
+        <td>id</td>
+        <td>名称</td>
+        <td>图片</td>
+        <td>操作</td>
+    </tr>  
+      </thead>  
+      <tbody>  
+        <% for(var i=0;i<imginfo.length;i++){%>
+          <tr>
+            <td><%= i+1%></td>
+            <td class="id"><%= imginfo[i].id%></td>
+            <td><%= imginfo[i].img_name%></td>
+            <td class="img"><img src="<%= imginfo[i].url%>" style="width:80%;height:100%;"></td>
+            <td>
+              <button class="change_id">修改</button>
+              <button class="del_id">删除</button>
+            </td>
+          </tr>
+        <%}%>
+      </tbody>  
+    </table>
+    <!-- 修改页面 -->
+    <div id="change_demo">
+    <button class="close">关闭</button>
+    <p class="list"><p>
+    <form method="post" action="/swiper_updata" enctype="multipart/form-data">
+      <input name="inputFile" type="file"  multiple="mutiple"/>
+      <input name="currot" type="text" value="" multiple="mutiple" id="currot" style="display:none" />
+      <input id="newimg" type="submit" value="修改" />
+     </form>
+    </div>
+</body>
+</html>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<!-- c操作功能 -->
+<!-- 上传操作 -->
+<script type="text/javascript">
+  $("#upbtn").click(function () {
+    // body...
+    if($("#upload").val().length==0){
+      alert("请选择文件");
+    }else{
+      $("#btnUp").click();
+    }
+  });
+</script>
+<script>
+ <!-- 删除操作  -->
+$(".del_id").click(function(){
+  var index=$(".del_id").index(this);
+  var id = $(".id")[index].innerText;
+  $(document).ready(function(){
+             $.post("/swiper_del",{
+              del_currot:id,
+              del_list:index
+           },
+            function(data,status){
+              alert("删除成功");
+               window.location.href = "/swiper_upload";
+             });
+           });
+});
+//修改操作
+$(".change_id").click(function(){
+  // 按钮点击后显示
+  $("#change_demo").css("display","block");
+  var index=$(".change_id").index(this);
+  var id = $(".id")[index].innerText;
+  $("#currot").val(id);
+  $(".list").text("次序"+(index+1));
+});
+// 关闭页面
+$(".close").click(function(){
+  $("#change_demo").css("display","none");
+})
+// 返回信息提示
+var info ="<%= info%>";
+if(info.length>2){
+  alert(info);
+}
+</script>  
+<!-- 分页 -->
+    <script>  
+      $(function(){  
+         var $table = $('table');  
+         var currentPage = 0;//当前页默认值为0  
+         var pageSize = 5;//每一页显示的数目  
+         $table.bind('paging',function(){  
+             $table.find('tbody tr').hide().slice(currentPage*pageSize,(currentPage+1)*pageSize).show();  
+         });       
+         var sumRows = $table.find('tbody tr').length;  
+         var sumPages = Math.ceil(sumRows/pageSize);//总页数  
+           
+         var $pager = $('<div class="page"></div>');  //新建div，放入a标签,显示底部分页码  
+         for(var pageIndex = 0 ; pageIndex<sumPages ; pageIndex++){  
+             $('<li id="pageStyle" onclick="changCss(this)"><span>'+(pageIndex+1)+'</span></li>').bind("click",{"newPage":pageIndex},function(event){  
+                 currentPage = event.data["newPage"];  
+                 $table.trigger("paging");  
+                   //触发分页函数  
+                 }).appendTo($pager);  
+                 $pager.append(" ");  
+             }     
+             $pager.insertAfter($table);  
+             $table.trigger("paging");  
+               
+             //默认第一页的a标签效果  
+             var $pagess = $('#pageStyle');  
+             $pagess[0].style.backgroundColor="#006B00";  
+             $pagess[0].style.color="#ffffff";  
+    });  
+      
+    //li链接点击变色，再点其他回复原色  
+      function changCss(obj){  
+        var arr = document.getElementsByTagName("li");  
+        for(var i=0;i<arr.length;i++){     
+         if(obj==arr[i]){       //当前页样式  
+          obj.style.backgroundColor="#006B00";  
+          obj.style.color="#ffffff";  
+        }  
+         else  
+         {  
+           arr[i].style.color="";  
+           arr[i].style.backgroundColor="";  
+         }  
+        }  
+     }      
+    </script>  

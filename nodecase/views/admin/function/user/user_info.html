@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Title</title>
+    <style type="text/css">
+        table{
+            width: 90%;
+            margin: auto;
+        }
+        th,td{
+            text-align: center;
+        }
+        .img{
+            width: 10%;
+        }
+
+    </style>
+</head>
+<body background="images/zzpic11207.jpg">
+   
+<table border="1">
+    <thead>
+        <tr>
+            <th>次序</th>
+            <th>用户ID</th>
+            <th>用户名</th>
+            <th>用户图像</th>
+            <th>购物车</th>
+        </tr>
+    </thead>
+    <tbody>
+         <% for(var i=0;i<userinfo.length;i++){%>
+          <tr>
+            <td><%= i+1%></td>
+            <td class="id"><%= userinfo[i].uid%></td>
+            <td><%= userinfo[i].uname%></td>
+            <td ><img src="<%= userinfo[i].img_url%>" class="img"></td>
+            <td><button>查看</button></td>
+          </tr>
+        <%}%>
+    </tbody>
+</table>
+</body>
+</html>       
+</script>

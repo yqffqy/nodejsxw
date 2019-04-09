@@ -1,0 +1,206 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<title>轮播图修改</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>  
+     table{  
+         width:100%;  
+         text-align:center;
+         margin: auto;
+         }  
+     table tr th,td{  
+         height:30px;  
+         line-height:30px;  
+         border:1px solid #ccc;
+         }  
+      #pageStyle{  
+         display:inline-block;  
+         width:32px;  
+         height:32px;  
+         border:1px solid #CCC;  
+         line-height:32px;  
+         text-align:center;  
+         color:#999;  
+         margin-top:20px;  
+         text-decoration:none;  
+      
+         }  
+      #pageStyle:hover{  
+          background-color:#CCC;  
+          }  
+      #pageStyle .active{  
+          background-color:#0CF;  
+          color:#ffffff;  
+          }
+          .page{
+            width: 100%;
+            margin: auto;
+          }
+          .Function{
+            width: 100%;
+            height: 100px;
+            margin: 30px auto;
+            border: 1px solid red;
+          }
+          .Function select{
+            width: 60px;
+            margin: 30px;
+          }
+          .goods_insert{
+            width: 90%;
+            height: 0px;
+            overflow: hidden;
+            background: #ccc;
+            position: fixed;
+            z-index: 2;
+            top:3%;
+            left: 5%;
+            transition: height 2s;
+          }
+          .goods_updata{
+            width: 100%;
+            height: 0px;
+            overflow: hidden;
+            background: #ccc;
+            position: fixed;
+            z-index: 2;
+            top:3%;
+            left: 5%;
+            transition: height 2s;
+          }
+          .goods_insert form {
+            width: 20%;
+            height: 30px;
+            margin: 20px;
+            float: left;
+
+          }
+          .goods_updata form {
+            width: 20%;
+            height: 30px;
+            margin: 20px;
+            float: left;
+
+          }
+          .class_select{
+            width: 100px;
+            height: 20px;
+
+          }
+          .close{
+            float: right;
+          }
+          .cselect{
+            width: 120px;
+            height: 20px;
+          }
+    </style>
+
+</head>
+
+<body ng-app="app" ng-controller="ctrl">
+  <div class="Function">
+     <select class="cselect">
+       <option>进入子表</option>
+       <option>鞋柜精选</option>
+       <option>折扣商品</option>
+     </select>
+     <a href="/goods_main">返回主表</a>
+  </div>
+  <table cellspacing="0">  
+      <thead>  
+        <tr>
+          <th><input type="checkbox" class="choose"></th>
+          <th>次序</th>  
+          <th>商品id</th>  
+          <th>商品名</th>  
+          <th>商品原价</th>
+          <th>商品现价</th>
+          <th>库存</th>
+          <th>商品图片</th>
+        </tr>  
+      </thead>  
+      <tbody>
+         <% for(var i=0;i<goodsinfo.length;i++){%>
+          <tr>
+            <td><input type="checkbox" class="choose"></td>
+            <td><%= i+1%></td>
+            <td class="gid"><%= goodsinfo[i].gid%></td>
+            <td class="gname"><%= goodsinfo[i].gname%></td>
+            <td class="c_price"><%= goodsinfo[i].c_price%></td>
+            <td class="n_price"><%= goodsinfo[i].n_price%></td>
+            <td class="inventory"><%= goodsinfo[i].inventory%></td>
+            <td><img src="<%= goodsinfo[i].img_url%>" style="width:50px;height:40px;"></td>
+          </tr>
+        <%}%>      
+      </tbody>  
+    </table> 
+</body>
+</html>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+  //子表跳转
+  // 进入子表
+        $(".cselect").change(
+           function (data) {
+           var value = $(".cselect").val();
+           $(document).ready(function(){
+                     $.post("/goods_child",{
+                      url:""
+                   },
+                    function(data,status){
+                       alert("进入"+value+"表");
+                       window.location.href = "/goods_child?class_id="+value;
+                     });
+                });       
+        });
+</script>
+    <script>  
+      $(function(){  
+         var $table = $('table');  
+         var currentPage = 0;//当前页默认值为0  
+         var pageSize = 5;//每一页显示的数目  
+         $table.bind('paging',function(){  
+             $table.find('tbody tr').hide().slice(currentPage*pageSize,(currentPage+1)*pageSize).show();  
+         });       
+         var sumRows = $table.find('tbody tr').length;  
+         var sumPages = Math.ceil(sumRows/pageSize);//总页数  
+           
+         var $pager = $('<div class="page"></div>');  //新建div，放入a标签,显示底部分页码  
+         for(var pageIndex = 0 ; pageIndex<sumPages ; pageIndex++){  
+             $('<li href="#" id="pageStyle" onclick="changCss(this)"><span>'+(pageIndex+1)+'</span></li>').bind("click",{"newPage":pageIndex},function(event){  
+                 currentPage = event.data["newPage"];  
+                 $table.trigger("paging");  
+                   //触发分页函数  
+                 }).appendTo($pager);  
+                 $pager.append(" ");  
+             }     
+             $pager.insertAfter($table);  
+             $table.trigger("paging");  
+               
+             //默认第一页的a标签效果  
+             var $pagess = $('#pageStyle');  
+             $pagess[0].style.backgroundColor="#006B00";  
+             $pagess[0].style.color="#ffffff";  
+    });  
+      
+    //a链接点击变色，再点其他回复原色  
+      function changCss(obj){  
+        var arr = document.getElementsByTagName("li");  
+        for(var i=0;i<arr.length;i++){     
+         if(obj==arr[i]){       //当前页样式  
+          obj.style.backgroundColor="#006B00";  
+          obj.style.color="#ffffff";  
+        }  
+         else  
+         {  
+           arr[i].style.color="";  
+           arr[i].style.backgroundColor="";  
+         }  
+        }  
+     }      
+    </script>  

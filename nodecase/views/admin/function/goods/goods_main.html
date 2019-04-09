@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+<meta charset="utf-8">
+<title>轮播图修改</title>
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>  
+      * button{
+         border: 0;
+
+      }
+     table{  
+         width:100%;  
+         text-align:center;
+         margin: auto;
+         }  
+     table tr th,td{  
+         height:30px;  
+         line-height:30px;  
+         border:1px solid #ccc;
+         }  
+      #pageStyle{  
+         display:inline-block;  
+         width:32px;  
+         height:32px;  
+         border:1px solid #CCC;  
+         line-height:32px;  
+         text-align:center;  
+         color:#999;  
+         margin-top:20px;  
+         text-decoration:none;  
+      
+         }  
+      #pageStyle:hover{  
+          background-color:#CCC;  
+          }  
+      #pageStyle .active{  
+          background-color:#0CF;  
+          color:#ffffff;  
+          }
+          .page{
+            width: 100%;
+            margin: auto;
+          }
+          .Function{
+            width: 99.5%;
+            height: 100px;
+            margin: 30px auto;
+            border: 1px solid #ccc;
+          }
+          .Function select{
+            width: 60px;
+            margin: 30px;
+          }
+          .goods_insert{
+            width:  100%;
+            height: 0px;
+            overflow: hidden;
+            background: #eef5f9;
+            position: fixed;
+            z-index: 2;
+            top:3%;
+            transition: height 2s;
+          }
+          .goods_updata{
+            width: 100%;
+            height: 0px;
+            overflow: hidden;
+            background: #eef5f9;
+            position: fixed;
+            z-index: 2;
+            top:3%;
+            transition: height 2s;
+          }
+          .goods_insert form {
+            width: 100%;
+            margin: 20px;
+            float: left;
+
+
+          }
+          .goods_updata form {
+            width: 100%;
+            margin: 20px;
+            float: left;
+
+          }
+          .goods_in{
+            background: green;
+          }
+          .class_select{
+            width: 100px;
+            height: 20px;
+
+          }
+          .close{
+            float: right;
+            background: red;
+          }
+          .bselect{
+            width: 120px;
+            height: 20px;
+          }
+          .explain{
+            width: 20%;
+            overflow: height;
+          }
+          .change_id{
+            background: green;
+          }
+          .del_id{
+            background: red;
+          }
+          .to_class{
+            padding-bottom: 20px;
+            border-bottom:  2px solid #817ce0;
+            width: 90%;
+          }
+          .class_span{
+            width: 90%;
+            margin: 10px;
+            
+          }
+          .class_span span{
+            margin-right: 10%;
+          }
+          .class_span span:after{
+             content: "";
+             
+          }
+          .tools{
+              width: 200px;
+              height:300px;
+              background: rgb(152,120,10,0.5);
+              position: absolute;
+              right: 0;
+              top:30px;
+              color: red;
+
+          }
+    </style>
+
+</head>
+
+<body ng-app="app" ng-controller="ctrl">
+  <div class="Function">
+     <select class="bselect">
+       <option>筛选</option>
+       <option>鞋柜精选</option>
+       <option>折扣商品</option>
+     </select>
+     <select class="cselect">
+       <option>进入子表</option>
+       <option>鞋柜精选</option>
+       <option>折扣商品</option>
+     </select>
+     <button class="goods_in">商品添加</button>
+  </div>
+  <table cellspacing="0">  
+      <thead>  
+        <tr>
+          <th><input type="checkbox" class="choose"></th>
+          <th>次序</th>  
+          <th>商品id</th>  
+          <th>商品名</th>
+          <th>类别</th>  
+          <th>商品原价</th>
+          <th>商品现价</th>
+          <th>库存</th>
+          <th>商品图片</th>
+          <th>尺寸</th>
+          <th>颜色</th>
+          <th class="explain">说明</th>
+          <th>标签</th>
+          <th>商品操作</th>
+        </tr>  
+      </thead>  
+      <tbody>
+         <% for(var i=0;i<goodsinfo.length;i++){%>
+          <tr>
+            <td><input type="checkbox" class="choose"></td>
+            <td><%= i+1%></td>
+            <td class="gid"><%= goodsinfo[i].gid%></td>
+            <td class="gname"><%= goodsinfo[i].gname%></td>
+            <td class="class_id"><%= goodsinfo[i].class_id%></td>
+            <td class="c_price"><%= goodsinfo[i].c_price%></td>
+            <td class="n_price"><%= goodsinfo[i].n_price%></td>
+            <td class="inventory"><%= goodsinfo[i].inventory%></td>
+            <td><img src="<%= goodsinfo[i].img_url%>" style="width:50px;height:40px;"></td>
+            <td class="goods_size"><%= goodsinfo[i].goods_size%></td>
+            <td class="goods_color"><%= goodsinfo[i].goods_color%></td>
+            <td class="goods_explain"><%= goodsinfo[i].goods_explain%></td>
+            <td class="goods_labels"><%= goodsinfo[i].goods_labels%></td>
+            <td>
+              <button class="change_id">修改</button>
+              <button class="del_id">删除</button>
+            </td>
+          </tr>
+        <%}%>      
+      </tbody>  
+    </table>
+    <div class="goods_insert">
+      <div class="tools">
+              
+      </div>
+      <button class="close">关闭</button>
+      <form method="post" action="/goods_insert" enctype="multipart/form-data">
+        <div class="to_class">
+          <p>商品名称</p>
+          <input name="gname"  class="gname" type="text" multiple="mutiple" placeholder="商品名称">
+        </div>
+        <div class="to_class">
+          <div class="class_span">
+            <span>原价<input name="c_price" oninput="to_s(this.value)" class="c_price"type="text" multiple="mutiple" placeholder="原价"></span>
+            <span>现价<input name="n_price" oninput="to_s(this.value)" class="n_price" type="text" multiple="mutiple" placeholder="现价"></span>
+            <span>库存<input name="inventory" oninput="to_s(this.value)" class="inventory" type="text" multiple="mutiple" placeholder="库存"><span><br>
+            <span>尺寸<input name="size" oninput="to_s(this.value)" class="size" type="text" multiple="mutiple" placeholder="尺寸"></span>
+            <span>颜色<input name="color" class="color" type="text" multiple="mutiple" placeholder="颜色"></span>
+          </div>
+        </div>
+        <div class="to_class">
+          <div class="class_span">
+             <span>标签<input name="labels" class="labels"  type="text" multiple="mutiple" placeholder="标签"></span>
+             <span>类别<input name="class_id" id="class_id" type="text" multiple="mutiple" placeholder="类别" readonly="readonly" value="所有鞋柜"></span>
+              <span>
+                <select class="class_select">
+                 <option value="类别">类别</option>
+                 <option value="鞋柜精选">鞋柜精选</option>
+                 <option value="折扣商品">折扣商品</option>
+                </select>
+              </span>
+          </div>
+        </div>
+        <div class="to_class">
+          <p>图片上传：<input name="inputFile" type="file" class="upfile" multiple="mutiple" placeholder="选着图片"/></p>
+        </div>
+        <div class="to_class">
+           <p>商品说明</p><textarea style="min-height: 100px;min-width: 370px;max-height: 250px; max-width: 370px;resize:none" multiple="mutiple" name="explain"></textarea>
+           <p><input type="submit" value="提交" class="Upbtn" style="background: green;border: none;width: 60px;border-radius:5px;padding: 5px;display: none"></p>
+           <p><input type="button" value="提交" class="upbtn" onclick="Upsubmit()" style="background: green;border: none;width: 60px;border-radius:5px;padding: 5px"></p>
+        </div>
+      </form>
+    </div>
+    <div class="goods_updata">
+      <button class="close">关闭</button>
+      <form method="post" action="/goods_updata" enctype="multipart/form-data">
+        <div class="to_class">
+          <div class="class_span">
+            <span class="list"></span> 
+            <span>商品id<input name="gid" type="text" multiple="mutiple" class="gid" readonly="readonly"></span>
+            <span>商品名称<input name="gname" type="text" multiple="mutiple" class="gname"></span>
+          </div>
+        </div>
+        <div class="to_class">
+          <div class="class_span">
+            <span>原价<input name="c_price" type="text" multiple="mutiple" class="c_price"></span>
+            <span>现价<input name="n_price" type="text" multiple="mutiple" class="n_price"></span>
+            <span>库存<input name="inventory" type="text" multiple="mutiple" class="inventory"></span>
+            <span>尺寸<input name="size" type="text" multiple="mutiple" class="goods_size"></span>
+            <span>颜色<input name="color" type="text" multiple="mutiple" class="goods_color"></span>
+          </div>
+        </div>
+        <div class="to_class">
+           <div class="class_span">
+             <span>标签<input name="labels" type="text" multiple="mutiple" class="goods_labels"></span>
+             <span>类别<input name="class_id" id="class_id" type="text" multiple="mutiple" readonly="readonly"></span>
+             <span>
+               <select class="updata_select">
+                <option value="所有鞋柜">所有鞋柜</option>
+                <option value="鞋柜精选">鞋柜精选</option>
+                <option value="折扣商品">折扣商品</option>
+                </select>
+           </div>
+        </div>
+        <div class="to_class">
+           <p>图片更新：<input name="inputFile" type="file"  multiple="mutiple"  /></p>
+        </div>
+        <div class="to_class">
+          <p>商品说明</p>
+          <textarea style="min-height: 100px;min-width: 370px;max-height: 250px; max-width: 370px;resize:none" multiple="mutiple" name="explain" class="goods_explain"></textarea>
+          <input type="submit" value="修改" style="background:green;border-radius:5px;width: 60px;border:none">
+        </div>
+      </form>
+    </div>
+</body>
+</html>
+<script src="http://libs.baidu.com/jquery/2.0.0/jquery.min.js"></script>
+<!-- 输入情况进行限定 -->
+   <script type="text/javascript">
+    <!-- 初始化信息 -->
+    if($(".goods_insert .gname").val().length==0){  
+         $(".goods_insert .to_class").first().append("<p style='width:200px;display:inline;color:red;margin-left:20px' class='info_wa'>*请输入商品名</p>");
+      }else{
+         $(".goods_insert .to_class p").remove();
+      }
+      // 判断用户商品输入
+      $(".goods_insert .gname").bind('input propertychange',function () {
+        if($(this).val()!=""){
+          $('.info_wa').remove();
+        }else{
+          $(".goods_insert .to_class").first().append("<p style='width:200px;display:inline;color:red;margin-left:20px' class='info_wa'>*请输入商品名</p>");
+        }
+       });
+      // 判断数字输入
+       function to_s(self) {
+         // body...
+         var isnum = /^\d+$/.test(self);
+          if(!isnum){
+            $(".tools").text("*请输入数字");
+            
+          }else{
+            $(".tools").text("*");
+          }
+       }
+     function Upsubmit(argument) {
+       // body...
+       if($(".goods_insert .gname").val().length==0&&$(".goods_insert .upfile").val().length==0){
+         alert("请完善相关信息");
+       }else{
+         $(".Upbtn").click();
+       }
+     }
+   </script>
+     <!-- 商品插入 -->
+    <script type="text/javascript">
+      $(".goods_in").click(function(){
+        // 打开商品录入操作页面
+        $(".goods_insert").css("height","700px");
+      });
+       // 类别选中
+        $(".class_select").change(
+           function (data) {
+           var value = $(".class_select").val();
+           $("#class_id").val(value);
+                
+        });
+        // 更新类别选中
+        $(".updata_select").change(
+           function (data) {
+           var value = $(".updata_select").val();
+           $(".goods_updata #class_id").val(value);
+                
+        });
+        // 进入子表
+        $(".cselect").change(
+           function (data) {
+           var value = $(".cselect").val();
+           $(document).ready(function(){
+                     $.post("/goods_child",{
+                      url:""
+                   },
+                    function(data,status){
+                       alert("进入"+value+"表");
+                       window.location.href = "/goods_child?class_id="+value;
+                     });
+                });       
+        });
+        // 关闭操作页面
+        $(".close").click(function(){
+          $(".close").parent().css("height","0px");
+        });
+        // 打开更新操作页面
+        $(".change_id").click(function(){
+            $(".goods_updata").css("height","700px");
+            // 监听修改按钮
+            var index=$(".change_id").index(this);
+            var gid = $(".gid")[index].innerText;
+            var gname = $(".gname")[index].innerText;
+            var c_price = $(".c_price")[index].innerText;
+            var n_price = $(".n_price")[index].innerText;
+            var inventory = $(".inventory")[index].innerText;
+            var goods_size = $(".goods_size")[index].innerText;
+            var class_id = $(".class_id")[index].innerText;
+            var color = $(".goods_color")[index].innerText;
+            var explain = $(".goods_explain")[index].innerText;
+            var labels = $(".goods_labels")[index].innerText;
+            // 数据传到更新页面
+            $(".goods_updata .list").text("次序："+(index+1));
+            $(".goods_updata .gid").val(gid);
+            $(".goods_updata .gname").val(gname);
+            $(".goods_updata .c_price").val(c_price);
+            $(".goods_updata .n_price").val(n_price);
+            $(".goods_updata .inventory").val(inventory);
+            $(".goods_updata #class_id").val(class_id);
+            $(".goods_updata .goods_size").val(goods_size);
+            $(".goods_updata .goods_color").val(color);
+            $(".goods_updata .goods_labels").val(labels);
+            $(".goods_updata .goods_explain").val(explain);
+            $(".goods_updata .img_url").val(img_url);
+        });
+// 删除操作 
+       $(".del_id").click(function(){
+          var index=$(".del_id").index(this);
+          var gid = $(".gid")[index].innerText;
+          $(document).ready(function(){
+                     $.post("/goods_del",{
+                      del_currot:gid,
+                      del_list:index
+                   },
+                    function(data,status){
+                      alert("删除成功");
+                       window.location.href = "/goods_main";
+                     });
+                   });
+        });
+    </script>
+    <script>  
+      $(function(){  
+         var $table = $('table');  
+         var currentPage = 0;//当前页默认值为0  
+         var pageSize = 7;//每一页显示的数目  
+         $table.bind('paging',function(){  
+             $table.find('tbody tr').hide().slice(currentPage*pageSize,(currentPage+1)*pageSize).show();  
+         });       
+         var sumRows = $table.find('tbody tr').length;  
+         var sumPages = Math.ceil(sumRows/pageSize);//总页数  
+           
+         var $pager = $('<div class="page"></div>');  //新建div，放入a标签,显示底部分页码  
+         for(var pageIndex = 0 ; pageIndex<sumPages ; pageIndex++){  
+             $('<li href="#" id="pageStyle" onclick="changCss(this)"><span>'+(pageIndex+1)+'</span></li>').bind("click",{"newPage":pageIndex},function(event){  
+                 currentPage = event.data["newPage"];  
+                 $table.trigger("paging");  
+                   //触发分页函数  
+                 }).appendTo($pager);  
+                 $pager.append(" ");  
+             }     
+             $pager.insertAfter($table);  
+             $table.trigger("paging");  
+               
+             //默认第一页的a标签效果  
+             var $pagess = $('#pageStyle');  
+             $pagess[0].style.backgroundColor="#006B00";  
+             $pagess[0].style.color="#ffffff";  
+    });  
+      
+    //a链接点击变色，再点其他回复原色  
+      function changCss(obj){  
+        var arr = document.getElementsByTagName("li");  
+        for(var i=0;i<arr.length;i++){     
+         if(obj==arr[i]){       //当前页样式  
+          obj.style.backgroundColor="#006B00";  
+          obj.style.color="#ffffff";  
+        }  
+         else  
+         {  
+           arr[i].style.color="";  
+           arr[i].style.backgroundColor="";  
+         }  
+        }  
+     }      
+    </script>  
