@@ -21,6 +21,6 @@
     "request": "^2.88.0",
     "serve-favicon": "~2.3.0",
     "session-file-store": "^1.2.0",
-    "yarn": "^1.13.0"
+    "yarn": "^1.22.0"
   }
 }
